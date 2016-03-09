@@ -1,0 +1,7 @@
+<Alloy>
+	<Window class="container">		
+		<View class="parentView">
+			<Require type="widget" src="afb.offlineMap" id="map"></Require>
+		</View>
+	</Window>
+</Alloy>

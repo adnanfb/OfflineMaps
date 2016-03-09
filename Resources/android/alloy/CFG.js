@@ -1,0 +1,1 @@
+module.exports={"dependencies":{"afb.offlineMap":"1.0"}};

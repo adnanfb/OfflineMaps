@@ -1,0 +1,291 @@
+<html style='height: 100%; width: 100%;'>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<meta charset="utf-8">
+		<script src="src/jquery-1.12.0.min.js"></script>
+		<link rel="stylesheet" href="leaflet.css" />
+		<link rel="stylesheet" href="src/L.Control.Sidebar.css" />
+		<link rel="stylesheet" type="text/css" href="src/MarkerCluster.css" />
+		<link rel="stylesheet" type="text/css" href="src/MarkerCluster.Default.css" />
+		<style>
+			@font-face {
+				font-family: Roboto-Medium;
+				src: url('fonts/Roboto-Medium.ttf');
+			}
+			@font-face {
+				font-family: Roboto-Regular;
+				src: url('fonts/Roboto-Regular.ttf');
+			}
+
+			#map {
+				height: 100%;
+				width: 100%;
+				margin: 0;
+			}
+
+			#sidebar {
+				padding: 24px;
+				height: auto;
+				width: auto;
+				float: right;
+				border-radius: 0px;
+			}
+
+			body, html {
+				margin: 0;
+				padding: 0;
+			}
+
+			hr {
+				width: 100%;
+				height: 1px;
+				background: #fff
+			}
+
+			.popLabelTitle {
+				color: #000000;
+				font-family: Roboto-Regular;
+				font-size: 20
+			}
+
+			.popLabelSubTitle {
+				color: #505050;
+				font-family: Roboto-Regular;
+				font-size: 14
+			}
+
+			.popLabelBlurred {
+				color: #505050;
+				font-family: Roboto-Medium;
+				font-size: 14
+			}
+			.radioTitle {
+				color: #505050;
+				font-family: Roboto-Regular;
+				font-size: 18
+			}
+			.divRadioRowHeight {
+				height: 35px;
+			}
+		</style>
+
+	</head>
+
+	<body>
+		<div id="sidebar" style="display:none">
+			<span style="font-family: Roboto-Regular;font-size: 16;">Species</span>
+			<br>
+			<div id='parent' >
+				<div class="divRadioRowHeight" >
+					<input class="repeatClick" type="radio" name="filter" value=0 >
+					<label class="radioTitle" >Abies</label>
+				</div>
+
+				<div class="divRadioRowHeight" >
+					<input class="repeatClick" type="radio" name="filter" value=1>
+					<label class="radioTitle" >Eucalyptus</label>
+				</div>
+
+				<div class="divRadioRowHeight" >
+					<input class="repeatClick" type="radio" name="filter" value=2>
+					<label class="radioTitle" >All</label>
+				</div>
+			</div>
+		</div>
+		<div id="map"></div>
+
+		<script src="leaflet.js"></script>
+		<script type='text/javascript' src='src/leaflet.markercluster.js'></script>
+		<script src="src/L.Control.Sidebar.js"></script>
+
+		<script>
+			var map;
+			window.onresize = function() {
+
+				Ti.API.info('********** RESIZE FUNCTION IS CALLED1!!!!! window.innerHeight' + window.innerHeight + ' //// document.body.clientHeight = ' + document.body.clientHeight);
+				// outputs window.innerheight =
+				document.getElementById("map").style.height = window.innerHeight + 'px';
+			};
+
+			var path = "",
+			    obj = "",			    
+			    center = "",
+			    bounds = "",
+			    minZoomLevel = "",
+			    maxZoomLevel = "",			    
+			    popUpDescr = "Deadline",
+			    markerClickEnabled,
+			    initializeSideBar,
+			    markerClusters;
+
+			Ti.App.addEventListener("app:startWebview", function(e) {
+
+				obj = e.pois;								
+				path = e.path;
+				center = e.center;				
+				minZoomLevel = e.minZoomLevel;
+				maxZoomLevel = e.maxZoomLevel;
+				bounds = e.bounds;
+				markerClickEnabled = (e.markerClickEnabled === true) ? true : false;
+				initializeSideBar = e.initializeSideBar;
+				defaultSelectedOption = e.defaultSelectedOption;
+				markerClusters = L.markerClusterGroup({
+					maxClusterRadius : 50,
+					disableClusteringAtZoom : maxZoomLevel
+				});
+				createMap();
+
+			});
+
+			function createMap() {
+				var points = obj;
+				map = L.map('map', {
+					center : center,
+					zoom : minZoomLevel,
+					zoomControl : false
+				});
+
+				L.control.zoom({
+					position : 'bottomleft'
+				}).addTo(map);
+
+				var layerLoc = path + "/{z}_{x}_{y}.png";
+				var tileLayer = L.tileLayer(layerLoc, {
+					minZoom : minZoomLevel,
+					maxZoom : maxZoomLevel,
+					bounds : bounds,
+					unloadInvisibleTiles : true,
+					id : 'mapbox.streets'
+
+				}).addTo(map);
+
+				map.setMaxBounds(bounds);
+
+				var indicatorMarker;
+
+				var indicatorIcon = L.icon({
+					iconUrl : "images/gps_indicator_med.png",
+					iconRetinaUrl : "images/gps_indicator_med.png",
+					iconSize : [140, 140],
+					iconAnchor : [70, 70]
+				});
+
+				indicatorMarker = L.marker([0, 0], {
+					icon : indicatorIcon,
+					zIndexOffset : 0,
+					clickable : false
+				}).addTo(map);
+
+				function onClick(e) {
+					//alert('clicked a poi! ');
+					Ti.API.info("clicked a poi");
+				}
+
+				var zoomFactor = 0.8;
+				function addPois(zoom) {
+					Ti.API.info("addPois called with points: " + points.length);
+					markerClusters.clearLayers();
+					for (var i = 0,
+					    j = points.length; i < j; i++) {
+
+						var item = points[i];
+						var w = 28;
+						var h = 42;
+						var pinIcon = "mapMarkerGreen";
+						var date = "";
+
+						if (item.updated_at != "") {
+							var _date = new Date(item.updated_at);
+							date = _date.getDate() + '/' + (_date.getMonth() + 1) + '/' + _date.getFullYear();
+						}
+
+						var myIcon = L.divIcon({
+							iconSize : [w, h],
+							//iconAnchor : [(w / 2), h],
+							className : "testclass",
+							html : '<img style="width:' + w + 'px;height:' + h + 'px" src="images/poi_icons/' + pinIcon + '.png">'
+						});
+
+						var div_popup = L.DomUtil.create('div', 'popupInfo');
+						div_popup.innerHTML = '<div><label class="popLabelTitle" >' + item.accession_key + '</label></div><div><label class="popLabelSubTitle" > ' + popUpDescr + ' ' + date + '</label></div><hr /><div><label data-accession-no=' + item.accession_key + ' class="popLabelBlurred" >' + item.genus_name + '</label></div>';
+						$('.popLabelBlurred', div_popup).on('click', function(e) {
+							map.closePopup();
+							Ti.App.fireEvent("app:openInfoPage", {
+								accessionNo : $(this).data('accession-no')
+							});
+						});
+
+						var m = L.marker([item.lat, item.lon], {
+							icon : myIcon,
+							item : item,
+							clickable : markerClickEnabled,
+						}).bindPopup(div_popup);
+
+						markerClusters.addLayer(m);
+					};
+
+					map.addLayer(markerClusters);
+				}
+
+				//addPois(currentZoom);
+
+				var currentZoom = 16;
+
+				Ti.App.addEventListener("app:setPanTo", function(e) {
+					Ti.API.info('panned to: ' + JSON.stringify(e.poi));
+					map.panTo(new L.LatLng(e.poi[0].lat, e.poi[0].lon));
+				});
+
+				Ti.App.addEventListener("app:addPoints", function(e) {
+
+					Ti.API.info('e.points are: ' + JSON.stringify(e.points));
+					if (e.points) {
+
+						//points = e.pois;
+						points = e.points;
+						addPois(currentZoom);
+					}
+				});
+
+				tileLayer.addOneTimeEventListener("load", function() {
+					$(document).ready(function() {
+
+						function getResults(value) {
+
+							Ti.App.fireEvent("app:getResults", {
+								selectedOption : value
+							});
+						}
+
+
+						$('.repeatClick').change(function() {
+							Ti.API.info('fired' + this.value);
+							getResults(this.value);
+						});
+						Ti.API.info('doc ready!');
+					});
+					if (initializeSideBar === true) {						
+						popUpDescr = "Last inspected";
+						$("#sidebar").css("display", "block");
+						var sidebar = L.control.sidebar('sidebar', {
+							closeButton : false,
+							position : 'right'
+						});
+
+						map.addControl(sidebar);
+						sidebar.show();
+						var optionRowMarkup = $("#parent").children().eq(defaultSelectedOption).find('.repeatClick');
+						optionRowMarkup.prop("checked", true);
+						optionRowMarkup.trigger("change");
+
+					}
+					Ti.App.fireEvent("app:mapDidFinishLoading", {
+						result : true
+					});
+				});
+
+			}
+
+		</script>
+	</body>
+</html>

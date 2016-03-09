@@ -1,0 +1,3 @@
+<Alloy>
+	<WebView platform="android" id="scrollViewMap" onLoad="loadAndroidMap"  />
+</Alloy>
