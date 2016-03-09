@@ -13,9 +13,10 @@ There are several ways to set the limits. The easiest is to move the map to the 
 ```javascript
 set-geo-bounds -0.351468,51.38494,-0.148271,51.672342
 ```
-One easy way to find a bounding box is to use
-this website  http://boundingbox.klokantech.com/ for finding the bounds of the area. For instance if i had to get the bounds for *London*, i would find that place using the search box and then move the rectangular box to that area, choose *DublinCore* within the *Copy & Paste* option drop-down and it would give  the  co-ordinates as *westlimit=-0.351468; southlimit=51.38494; eastlimit=-0.148271; northlimit=51.672342* for  *London*.
+One easy way to find a bounding box is to use this website  http://boundingbox.klokantech.com/ for finding the bounds of the area. For instance if i had to get the bounds for *London*, I would find that place using the search box and then move the rectangular box to that area, choose *DublinCore* within the *Copy & Paste* option drop-down and it would give  the  co-ordinates as *westlimit=-0.351468; southlimit=51.38494; eastlimit=-0.148271; northlimit=51.672342* for  *London*.
+
 ![london12.jpg](https://bitbucket.org/repo/84Xp6e/images/942432459-london12.jpg)
+
 Replace above values accordingly when passing bounds to generating the tiles or to the leaflet library.
 Once you know the bounds, execute this command to generate tiles:
 
@@ -23,7 +24,7 @@ Once you know the bounds, execute this command to generate tiles:
 generate-tiles minzoom=16 maxzoom=18 bounds=-0.351468,51.38494,-0.148271,51.672342
 ```
 where bounds should be in the format *minlng,minlat,maxlng,maxlat.* 
-<br/>
+
 ![7-generate-tile.jpg](https://bitbucket.org/repo/84Xp6e/images/2716012887-7-generate-tile.jpg)
 The tiles will be generated in a directory named "Tiles" inside of the Maperitive directory. For higher zoom levels it could take a while to generate the tiles.
 
