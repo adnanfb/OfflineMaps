@@ -1,4 +1,4 @@
-# Creating Offline maps with Leaflet and Maperitive. #
+# Alloy App for android showing Offline map using Leaflet and Maperitive. #
 
 Titanium’s implementation of the Ti.Map object doesn’t support offline maps, so it was obvious to find a third party solution. I chose Leaflet library to display the maps as it has well documented APIs and can be extended with lots of available plugins.
 For offline use I have used the Maperitive software on Windows that generates tiles (square map images which, typically get pieced together by the web browser running a javascript library (i. e Leaflet).
