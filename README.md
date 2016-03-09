@@ -26,6 +26,7 @@ generate-tiles minzoom=16 maxzoom=18 bounds=-0.351468,51.38494,-0.148271,51.6723
 where bounds should be in the format *minlng,minlat,maxlng,maxlat.* 
 
 ![7-generate-tile.jpg](https://bitbucket.org/repo/84Xp6e/images/2716012887-7-generate-tile.jpg)
+
 The tiles will be generated in a directory named "Tiles" inside of the Maperitive directory. For higher zoom levels it could take a while to generate the tiles.
 
 ## This sample Alloy project for Android demonstrates how to: ##
