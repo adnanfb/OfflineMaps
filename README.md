@@ -7,8 +7,7 @@ For offline use I have used the Maperitive software on Windows that generates ti
 Maperitive is a FREE desktop GUI application for drawing maps based on OpenStreetMap and GPS data.You can define what gets on the map and how it is painted. You can also export these maps into bitmaps and SVG files and print them.
 ### Generating Tiles for a zoom level: ###
 We will need to tell Maperitive what area we are interested in.
-There are several ways to set the limits. The easiest is to move the map to the area, right-click on the map and choose *Place Geometry Bounds Here* from the context menu. When the red rectangle appears, you can move it and resize it to the area of your choice. 
-<br/>By default, Maperitive renders everything you see in the map on your screen if you do not use the rectangular box. But if you are happy with that you can move on or if you want to customise the area to something more specific you can set a bounding box for all your operations by using the command prompt. 
+There are several ways to set the limits. The easiest is to move the map to the area, right-click on the map and choose *Place Geometry Bounds Here* from the context menu. When the red rectangle appears, you can move it and resize it to the area of your choice. By default, Maperitive renders everything you see in the map on your screen if you do not use the rectangular box. But if you are happy with that you can move on or if you want to customise the area to something more specific you can set a bounding box for all your operations by using the command prompt. 
 
 ```javascript
 set-geo-bounds -0.351468,51.38494,-0.148271,51.672342
@@ -36,18 +35,93 @@ The tiles will be generated in a directory named "Tiles" inside of the Maperitiv
 *  use the Leaflet Markercluster plugin to handle a lot of markers
 *  have the markers show the annotation when clicked
 
-## Use: ##
-Pick the widget and also the leaflet directory from the assets folder and paste it into your app. Built using Ti SDK 5.0.2 GA, tested on Google Nexus 10, Sony Z4 tablet for 2560x1600 dimension.
 
-## Example: ##
+## Deployment targets: ##
+* *Ti SDK 5.0.2 GA* 
+* *Tested on Google Nexus 10, Sony Z4 tablet for 2560x1600 dimension* 
+
+## Usage: ##
+Pick the widget and also the leaflet directory from the assets folder and paste it into your app. 
+
+##### index.xml
 ```javascript
-// Show sample code here
+<Alloy>
+	<Window class="container">		
+		<View class="parentView">
+			<Require type="widget" src="afb.offlineMap" id="map"></Require>
+		</View>
+	</Window>
+</Alloy>
 ```
-## Properties: ##
-```javascript
-// Define property descriptions here
-```
+
+## Widget Properties: ##
+* *borderColor {String}* - Scrollview border color
+* *top {Number}* - set top for the parent
+* *path {String}* - The path for the map tiles
+* *pois {Array}* - Pass this as an array of object along with lat and lon for the markers
+* *minZoomLevel {Number}*- The minimum zoom required for the map when it loads
+* *maxZoomLevel {Number}*  - The max zoom required for the map
+* *bounds {Array}* - [[S, W], [N, E]] Represents a rectangular area of the map usually bottom-left and top-right corners. This can be caculated from Google earth app or http://boundingbox.klokantech.com/
+* *center {Array}* - [lat, long ] The center co-ordinates for the map when it loads.
+* *initializeSideBar {Boolean}* -   Initialize the sidebar filter with true/false to show/hide.
+* *markerClickEnabled {Boolean}* - If the annotations are applied, make sure to enable this property.
+* *callback {Function}*  - This function will be called once the map tiles are loaded.
+* *optionChangeCallback {Function}* - This function is called when the filters in the sidebar are changed
+* *defaultSelectedOption {Number}*  - Mandatory when the sidebar
+
 ## Widget Methods: ##
+***init***
+
 ```javascript
-// Define method descriptions
+/**
+ * @method init Initialises the global variables that are needed for the map and tiles.
+ * @param {Object} _args required params for the map and tile constructor
+ *  * ** Object info **
+ * -  borderColor {String} Scrollview border color
+ * -  path {String} The path for the map tiles 
+ * -  pois {Array} - Details like name description and lat, long info about the pin.
+ * -  minZoomLevel {Number} - The minimum zoom required for the map when it loads
+ * -  maxZoomLevel {Number} - The max zoom required for the map
+ * -  bounds {Array} - [[S, W], [N, E]] Represents a rectangular area of the map usually bottom-left and top-right corners. This can be caculated from Google earth app or http://boundingbox.klokantech.com/
+ * -  initializeSideBar {Boolean}  Initialize the sidebar with true/false to show/hide.
+ * -  markerClickEnabled {Boolean} If the annotations are applied, make sure to enable this property.
+ * -  center {Array} - [lat, long ] The center co-ordinates for the map when it loads.
+ * @return {void}
+ */
 ```
+
+***setPanTo***
+
+```javascript
+/**
+ * @method setPanTo This function sets pins to the center by panning the map
+ * @param {Object} pois the object should have lat and lon of the pin for the panning to work.
+ * @return {void}
+ */
+```
+***setPOIs***
+
+```javascript
+
+/**
+ * @method setPOIs This function sets pins on the map. Can be used with filters.
+ * @param {Object} pois Details like name description and lat, long info about the pin.
+ * @return {void}
+ */
+```
+***destroy***
+
+```javascript
+/**
+ * @method destroy Used for releasing memory
+ * @return {void}
+ */
+```
+
+
+## Notice ##
+This application uses: 
+
+* Leaflet library - [http://leafletjs.com/reference.html](Link URL)
+* Maperitive - http://maperitive.net/docs/
+* Marker cluster plugin - [https://github.com/Leaflet/Leaflet.markercluster](Link URL)
