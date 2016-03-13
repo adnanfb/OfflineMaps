@@ -3,8 +3,8 @@ var defaultOption = 2; // For All filter as default selected.
 
 function mapDidFinishLoading() {
 	Ti.API.info("all visible tiles have been loaded");	
-	// Uncomment this function if no sidebar filters are needed and To get 'All' markers by default when filter sidebar is disabled
-	 getMarkers(1); 	 
+	// Your function to be called if initializeSideBar will be set to false. 
+	 //getMarkers(2); 	 
 }
 
 function init(){
