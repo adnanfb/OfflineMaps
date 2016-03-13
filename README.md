@@ -53,7 +53,7 @@ Pick the widget and also the leaflet directory from the assets folder and paste 
 	</Window>
 </Alloy>
 ```
-
+ 
 ## Widget Properties: ##
 * *borderColor {String}* - Scrollview border color
 * *top {Number}* - set top for the parent
@@ -70,6 +70,7 @@ Pick the widget and also the leaflet directory from the assets folder and paste 
 * *defaultSelectedOption {Number}*  - Mandatory when the sidebar
 
 ## Widget Methods: ##
+### So each View controller can call a number of below functions:  ###
 ***init***
 
 ```javascript
@@ -88,6 +89,11 @@ Pick the widget and also the leaflet directory from the assets folder and paste 
  * -  center {Array} - [lat, long ] The center co-ordinates for the map when it loads.
  * @return {void}
  */
+ 
+ $.init = function(_args) {
+	// ... //
+};
+
 ```
 
 ***setPanTo***
@@ -98,6 +104,13 @@ Pick the widget and also the leaflet directory from the assets folder and paste 
  * @param {Object} pois the object should have lat and lon of the pin for the panning to work.
  * @return {void}
  */
+
+ exports.setPanTo = function(poi) {
+	Ti.App.fireEvent("app:setPanTo", {
+		poi : poi
+	});
+};
+
 ```
 ***setPOIs***
 
@@ -108,6 +121,10 @@ Pick the widget and also the leaflet directory from the assets folder and paste 
  * @param {Object} pois Details like name description and lat, long info about the pin.
  * @return {void}
  */
+ 
+ exports.setPOIs = function(pois) {
+	// ... //
+};
 ```
 ***destroy***
 
@@ -116,6 +133,10 @@ Pick the widget and also the leaflet directory from the assets folder and paste 
  * @method destroy Used for releasing memory
  * @return {void}
  */
+ 
+exports.destroy = function() {
+	// ... //
+};
 ```
 
 
