@@ -106,9 +106,7 @@ Pick the widget and also the leaflet directory from the assets folder and paste 
  */
 
  exports.setPanTo = function(poi) {
-	Ti.App.fireEvent("app:setPanTo", {
-		poi : poi
-	});
+	// ... //
 };
 
 ```
