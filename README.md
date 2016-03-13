@@ -12,12 +12,11 @@ There are several ways to set the limits. The easiest is to move the map to the 
 ```javascript
 set-geo-bounds -0.351468,51.38494,-0.148271,51.672342
 ```
-One easy way to find a bounding box is to use this website  http://boundingbox.klokantech.com/ for finding the bounds of the area. For instance if i had to get the bounds for *London*, I would find that place using the search box and then move the rectangular box to that area, choose *DublinCore* within the *Copy & Paste* option drop-down and it would give  the  co-ordinates as *westlimit=-0.351468; southlimit=51.38494; eastlimit=-0.148271; northlimit=51.672342* for  *London*.
+Another easier way to find a bounding box is to use this website  http://boundingbox.klokantech.com/. For instance if i had to get the bounds for *London*, I would find that place using the search box and then move the rectangular box to that area, choose *DublinCore* within the *Copy & Paste* option drop-down and it would give  the  co-ordinates as *westlimit=-0.351468; southlimit=51.38494; eastlimit=-0.148271; northlimit=51.672342* for  *London*.
 
 ![london12.jpg](https://bitbucket.org/repo/84Xp6e/images/942432459-london12.jpg)
 
-Replace above values accordingly when passing bounds to generating the tiles or to the leaflet library.
-Once you know the bounds, execute this command to generate tiles:
+Once you know the bounds go back to Maperitive replace the co-ordinate values accordingly and execute this command to generate tiles:
 
 ```javascript
 generate-tiles minzoom=16 maxzoom=18 bounds=-0.351468,51.38494,-0.148271,51.672342
@@ -26,7 +25,9 @@ where bounds should be in the format *minlng,minlat,maxlng,maxlat.*
 
 ![7-generate-tile.jpg](https://bitbucket.org/repo/84Xp6e/images/2716012887-7-generate-tile.jpg)
 
+
 The tiles will be generated in a directory named "Tiles" inside of the Maperitive directory. For higher zoom levels it could take a while to generate the tiles.
+Now that we have generated the tiles paste them into the assets folder where the leaflet files would be able to access them. Now lets see how we can use them in our app.  
 
 ## This sample Alloy project for Android demonstrates how to: ##
 *  set up a map that uses offline tiles 
@@ -35,13 +36,8 @@ The tiles will be generated in a directory named "Tiles" inside of the Maperitiv
 *  use the Leaflet Markercluster plugin to handle a lot of markers
 *  have the markers show the annotation when clicked
 
-
-## Deployment targets: ##
-* *Ti SDK 5.0.2 GA* 
-* *Tested on Google Nexus 10, Sony Z4 tablet for 2560x1600 dimension* 
-
 ## Usage: ##
-Pick the widget and also the leaflet directory from the assets folder and paste it into your app. 
+Pick the widget for its directory and also the leaflet directory from the assets and paste it into your app. Note that this will also contain the sample tiles which you may want to replace or delete if using your own tiles.
 
 ##### index.xml
 ```javascript
@@ -54,23 +50,69 @@ Pick the widget and also the leaflet directory from the assets folder and paste 
 </Alloy>
 ```
  
+
+##### index.js
+```javascript
+function mapDidFinishLoading() {
+	// Your can call your default function here if initializeSideBar will be set to false. Will mostly be the same function passed that you passed to optionChangeCallback property. Since its set to true i have commented it to avoid it being called twice.
+	 //getMarkers(2); 	 
+}
+	$.map.init({
+		"borderColor" : "none",
+		"top" : 0,
+		"bottom" : 0,				
+		"minZoomLevel" : 16,
+		"maxZoomLevel" : 18,
+		"pois" : [],
+		"center":  [51.478744, -0.295573],
+		"bounds" : [[51.470103, -0.310407], [51.486674, -0.286572]],
+		"path" : "richmond",
+		"initializeSideBar" : true, 
+		"markerClickEnabled" : true,
+		"defaultSelectedOption" : 1,
+		"callback" : mapDidFinishLoading,
+		"optionChangeCallback" : function(defaultOption){
+			return getMarkers(defaultOption);	
+		}
+	});	
+
+	function getMarkers(option){
+		function getMarkersSuccess(payload){
+			// Pass the payload that has lat and lon properties
+			$.map.setPOIs(payload);
+		}
+	
+		function getMarkersError(payload){
+				// Reset the markers 
+				$.map.setPOIs([]);
+		}	
+		
+		dbLib.getMarkers(getMarkersSuccess, getMarkersError, {		
+			condition:option 
+		});	
+	}
+
+	
+```
+
 ## Widget Properties: ##
-* *borderColor {String}* - Scrollview border color
-* *top {Number}* - set top for the parent
-* *path {String}* - The path for the map tiles
-* *pois {Array}* - Pass this as an array of object along with lat and lon for the markers
-* *minZoomLevel {Number}*- The minimum zoom required for the map when it loads
-* *maxZoomLevel {Number}*  - The max zoom required for the map
+* *borderColor {String}* - Scrollview border color.
+* *top {Number}* - Set top for the parent.
+* *path {String}* - The path to the map tiles.
+* *pois {Array}* - Pass this as an array of object along with lat and lon for the markers.
+* *minZoomLevel {Number}*- The minimum zoom required for the map when it loads.
+* *maxZoomLevel {Number}*  - The max zoom required for the map.
 * *bounds {Array}* - [[S, W], [N, E]] Represents a rectangular area of the map usually bottom-left and top-right corners. This can be caculated from Google earth app or http://boundingbox.klokantech.com/
 * *center {Array}* - [lat, long ] The center co-ordinates for the map when it loads.
 * *initializeSideBar {Boolean}* -   Initialize the sidebar filter with true/false to show/hide.
 * *markerClickEnabled {Boolean}* - If the annotations are applied, make sure to enable this property.
 * *callback {Function}*  - This function will be called once the map tiles are loaded.
-* *optionChangeCallback {Function}* - This function is called when the filters in the sidebar are changed
-* *defaultSelectedOption {Number}*  - Mandatory when the sidebar
+* *optionChangeCallback {Function}* - This function is called when any option in the filter is changed.
+* *defaultSelectedOption {Number}*  - Mandatory when the initializeSideBar is true otherwise optional. 0 is the first selected option on sidebar.
 
 ## Widget Methods: ##
-### So each View controller can call a number of below functions:  ###
+So each View controller can call a number of below functions:  
+
 ***init***
 
 ```javascript
@@ -136,7 +178,16 @@ exports.destroy = function() {
 	// ... //
 };
 ```
+## Map event callback: ##
+***mapDidFinishLoading*** - This function is called once when all the tiles for the map are loaded. You will need this function to call your default function here if ***initializeSideBar*** will be set to false i.e when you don' t want to use the sidebar filter functionality'. In most cases it will be the function that you passed to optionChangeCallback property of the widget.  
 
+## Deployment targets: ##
+* *Ti SDK 5.0.2 GA* 
+* *Tested on Google Nexus 10, Sony Z4 tablet for 2560x1600 dimension API 21 & 22* 
+* 
+## Author: ##
+Adnan F Baliwala:
+[adnan@dogfi.sh](Link URL)
 
 ## Notice ##
 This application uses: 
