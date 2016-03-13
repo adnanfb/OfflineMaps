@@ -54,7 +54,7 @@ Pick the widget for its directory and also the leaflet directory from the assets
 ##### index.js
 ```javascript
 function mapDidFinishLoading() {
-	// Your can call your default function here if initializeSideBar will be set to false. Will mostly be the same function passed that you passed to optionChangeCallback property. Since its set to true i have commented it to avoid it being called twice.
+	// Your can call your default function here if initializeSideBar will be set to false. In most cases it will be the function that you passed to optionChangeCallback property of the widget. Since it is set to true i have commented it to avoid being called twice.
 	 //getMarkers(2); 	 
 }
 	$.map.init({
@@ -72,6 +72,7 @@ function mapDidFinishLoading() {
 		"defaultSelectedOption" : 1,
 		"callback" : mapDidFinishLoading,
 		"optionChangeCallback" : function(defaultOption){
+		// defaultOption - this is the returned selected filter index from the widget.
 			return getMarkers(defaultOption);	
 		}
 	});	
@@ -179,11 +180,11 @@ exports.destroy = function() {
 };
 ```
 ## Map event callback: ##
-***mapDidFinishLoading*** - This function is called once when all the tiles for the map are loaded. You will need this function to call your default function here if ***initializeSideBar*** will be set to false i.e when you don' t want to use the sidebar filter functionality'. In most cases it will be the function that you passed to optionChangeCallback property of the widget.  
+***mapDidFinishLoading*** - This function is called once when all the tiles for the map are loaded. You will need this function to call your default function inside this if ***initializeSideBar*** will be set to false i.e when you don' t want to use the sidebar filter functionality'. In most cases it will be the function that you passed to optionChangeCallback property of the widget. (Refer index.js) 
 
 ## Deployment targets: ##
 * *Ti SDK 5.0.2 GA* 
-* *Tested on Google Nexus 10, Sony Z4 tablet for 2560x1600 dimension API 21 & 22* 
+* *Google Nexus 10, Sony Z4 tablet for 2560x1600 dimension API 21 & 22* 
 * 
 ## Author: ##
 Adnan F Baliwala:
