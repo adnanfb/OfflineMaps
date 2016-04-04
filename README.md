@@ -14,7 +14,7 @@ set-geo-bounds -0.351468,51.38494,-0.148271,51.672342
 ```
 Another easier way to find a bounding box is to use this website  http://boundingbox.klokantech.com/. For instance if i had to get the bounds for *London*, I would find that place using the search box and then move the rectangular box to that area, choose *DublinCore* within the *Copy & Paste* option drop-down and it would give  the  co-ordinates as *westlimit=-0.351468; southlimit=51.38494; eastlimit=-0.148271; northlimit=51.672342* for  *London*.
 
-![london12.jpg](https://bitbucket.org/repo/84Xp6e/images/942432459-london12.jpg)
+![London area bounds](https://github.com/adnanfb/OfflineMaps/blob/adnan/app/assets/docImages/london12.jpg)
 
 Once you know the bounds go back to Maperitive replace the co-ordinate values accordingly and execute this command to generate tiles:
 
@@ -23,7 +23,7 @@ generate-tiles minzoom=16 maxzoom=18 bounds=-0.351468,51.38494,-0.148271,51.6723
 ```
 where bounds should be in the format *minlng,minlat,maxlng,maxlat.* 
 
-![7-generate-tile.jpg](https://bitbucket.org/repo/84Xp6e/images/2716012887-7-generate-tile.jpg)
+![Maperitive command prompt](https://github.com/adnanfb/OfflineMaps/blob/adnan/app/assets/docImages/7-generate-tile.jpg)
 
 
 The tiles will be generated in a directory named "Tiles" inside of the Maperitive directory. For higher zoom levels it could take a while to generate the tiles.
