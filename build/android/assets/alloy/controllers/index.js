@@ -1,1 +1,0 @@
-/Users/adnanfbaliwala/Documents/Appcelerator_Studio_Workspace/OfflineMaps/Resources/android/alloy/controllers/index.js
